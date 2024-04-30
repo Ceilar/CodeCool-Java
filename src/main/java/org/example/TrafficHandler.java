@@ -10,9 +10,9 @@ import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
+
 @Service
 public class TrafficHandler {
     @Autowired
@@ -34,22 +34,24 @@ public class TrafficHandler {
     }
 
     @PostConstruct
-    public void populateDatabase(){
-        for(int i=0;i < listOfTraffic.size();i++){
-            trafficRepository.save(new RecordedTraffic(listOfTraffic.get(i).getLicensePlate(), Time.valueOf(listOfTraffic.get(i).getTimeOfEntry()).toLocalTime(), Time.valueOf(listOfTraffic.get(i).getTimeOfExit()).toLocalTime()) );
+    public void populateDatabase() {
+        for (int i = 0; i < listOfTraffic.size(); i++) {
+            trafficRepository.save(new RecordedTraffic(listOfTraffic.get(i).getLicensePlate(),
+                    Time.valueOf(listOfTraffic.get(i).getTimeOfEntry()).toLocalTime(),
+                    Time.valueOf(listOfTraffic.get(i).getTimeOfExit()).toLocalTime()));
         }
     }
 
 
-
     public String printNumberOfEntries(TrafficRepository trafficRepository) {
-       return ("Exercise 2.\nThe data of " + trafficRepository.count() + " vehicles were recorded in the measurement");
+        return ("Exercise 2.\nThe data of " + trafficRepository.count() + " vehicles were recorded in the measurement");
     }
+
     public String printVehiclesAfter9(TrafficRepository trafficRepository) {
-        List<RecordedTraffic> list =  trafficRepository.findAll();
+        List<RecordedTraffic> list = trafficRepository.findAll();
         int countOfVehiclesBefore9 = 0;
         for (RecordedTraffic recordedTraffic : list) {
-            if (recordedTraffic.getTimeOfExit().isBefore(LocalTime.of(9,0))) {
+            if (recordedTraffic.getTimeOfExit().isBefore(LocalTime.of(9, 0))) {
                 countOfVehiclesBefore9++;
             }
         }
@@ -57,8 +59,6 @@ public class TrafficHandler {
     }
 
     public String requestUserInput(String input, TrafficRepository trafficRepository) {
-        //Scanner sc = new Scanner(System.in);
-        //String inputHours = input;
         String[] inputSplitter = input.split(" ");
         List<RecordedTraffic> list = trafficRepository.findAll();
         try {
@@ -79,15 +79,15 @@ public class TrafficHandler {
                         counter++;
                     }
                 }
-                return("The number of vehicle/s that passed the entry point recorder: " + counter + "\nThe traffic intencity " + counter / 10.0);
+                return ("The number of vehicle/s that passed the entry point recorder: " + counter + "\nThe traffic intencity " + counter / 10.0);
 
             } else {
                 return ("Enter a valid 'hh:mm' format time please1");
             }
 
 
-        } catch (IndexOutOfBoundsException|NumberFormatException e1) {
-            return "Enter a valid 'hh:mm' format time please2" ;
+        } catch (IndexOutOfBoundsException | NumberFormatException e1) {
+            return "Enter a valid 'hh:mm' format time please2";
         }
     }
 
@@ -97,7 +97,7 @@ public class TrafficHandler {
         int passedCars = 0;
         RecordedTraffic car = null;
         List<RecordedTraffic> list = trafficRepository.findAll();
-        for (int i = 0; i < trafficRepository.count() ; i++) {
+        for (int i = 0; i < trafficRepository.count(); i++) {
             time = SECONDS.between(list.get(i).getTimeOfEntry(), list.get(i).getTimeOfExit());
             if (time < minTime || minTime == 0) {
                 minTime = time;
@@ -110,10 +110,7 @@ public class TrafficHandler {
                 passedCars++;
             }
         }
-        return "The data of vehicle with the highest speed is:\n" + car.getLicensePlate() + "\nAverage speed:" + 10 / (minTime / (float) 3600) + " km/h" + "\nPassed cars:" + passedCars ;
-        //System.out.println("The data of vehicle with the highest speed is:\n" + car.getLicensePlate());
-        //System.out.println("Average speed:" + 10 / (minTime / (float) 3600) + " km/h");
-        //System.out.println("Passed cars:" + passedCars);
+        return "The data of vehicle with the highest speed is:\n" + car.getLicensePlate() + "\nAverage speed:" + 10 / (minTime / (float) 3600) + " km/h" + "\nPassed cars:" + passedCars;
     }
 
     public float findAllSpeedingVehicles(TrafficRepository trafficRepository) {
@@ -125,7 +122,6 @@ public class TrafficHandler {
             }
         }
         return speedingCars * 100 / (float) list.size();
-       // System.out.println(speedingCars * 100 / (float) list.size());
     }
 }
 
